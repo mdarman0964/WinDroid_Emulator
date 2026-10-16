@@ -32,6 +32,7 @@
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission
         android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -51,6 +52,11 @@
         tools:ignore="DataExtractionRules,GoogleAppIndexingWarning">
 
         <!-- Main activity -->
+        <service
+            android:name=".EmulatorKeepAliveService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name="com.winlator.cmod.MainActivity"
             android:theme="@style/AppTheme.Dark"
