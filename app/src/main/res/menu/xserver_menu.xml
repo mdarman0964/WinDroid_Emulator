@@ -6,6 +6,10 @@
             android:id="@+id/main_menu_keyboard"
             android:title="@string/keyboard" />
         <item
+            android:id="@+id/main_menu_clipboard_toggle"
+            android:title="Toggle Android Clipboard Sharing"
+            android:checkable="true" />
+        <item
             android:icon="@drawable/icon_input_controls"
             android:id="@+id/main_menu_input_controls"
             android:title="@string/input_controls" />
