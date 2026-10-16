@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int textColor = isDarkMode ? Color.WHITE : Color.BLACK;
         setNavigationViewItemTextColor(navigationView, textColor);
 
-        // Create Winlator folder if not present
+        // Create WinDroid folder if not present
         File winlatorDir = new File(SettingsFragment.DEFAULT_WINLATOR_PATH);
         if (!winlatorDir.exists())
             winlatorDir.mkdirs();
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ((TextView) dialog.findViewById(R.id.TVAppVersion)).setText(getString(R.string.version) + " " + pInfo.versionName);
 
             String creditsAndThirdPartyAppsHTML = String.join("<br />",
-                    "WinDroid is an independent MT5-focused project based on <a href=\"https://github.com/Stredohori/Winlator-CMOD\">Winlator-CMOD</a>.",
+                    "WinDroid is an independent MT5-focused project. Upstream source: <a href=\"https://github.com/Stredohori/Winlator-CMOD\">Winlator-CMOD</a>.",
                     "Upstream code and third-party notices are retained under their respective licenses.",
                     "---",
                     "Termux Package(<a href=\"https://github.com/termux/termux-packages\">github.com/termux/termux-package</a>)",
