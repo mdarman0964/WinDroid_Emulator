@@ -87,6 +87,10 @@ public class Mt5InstallerFragment extends Fragment {
                     Toast.makeText(context, "Could not create Download/WinDroid folder.", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if (installer.exists() && !installer.delete()) {
+                    Toast.makeText(context, "Could not replace the existing installer file.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                 if (manager == null) {
                     Toast.makeText(context, "Android Download Manager is unavailable.", Toast.LENGTH_LONG).show();
