@@ -251,6 +251,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.main_menu_contents:
                 show(new ContentsFragment(), false);  // Forward animation
                 break;
+            case R.id.main_menu_mt5_installer:
+                show(new Mt5InstallerFragment(), false);
+                break;
             case R.id.main_menu_adrenotools_gpu_drivers:
                 show(new AdrenotoolsFragment(), false);
                 break;
