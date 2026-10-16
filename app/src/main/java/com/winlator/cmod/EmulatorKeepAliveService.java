@@ -57,7 +57,7 @@ public class EmulatorKeepAliveService extends Service {
             if (powerManager != null && (wakeLock == null || !wakeLock.isHeld())) {
                 wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WinDroid:MT5Runtime");
                 wakeLock.setReferenceCounted(false);
-                wakeLock.acquire(12L * 60L * 60L * 1000L);
+                wakeLock.acquire();
             }
         } catch (Exception ignored) {
         }
