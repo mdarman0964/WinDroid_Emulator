@@ -866,6 +866,24 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         final GLRenderer renderer = xServerView.getRenderer();
         switch (item.getItemId()) {
+            case R.id.main_menu_clipboard_toggle: {
+                boolean shareClipboard = !preferences.getBoolean("share_android_clipboard", false);
+                preferences.edit().putBoolean("share_android_clipboard", shareClipboard).apply();
+                boolean browserIntegration = preferences.getBoolean("open_with_android_browser", false);
+                if (shareClipboard || browserIntegration) {
+                    if (wineRequestHandler == null) {
+                        wineRequestHandler = new WineRequestHandler(this);
+                        wineRequestHandler.start();
+                    }
+                } else if (wineRequestHandler != null) {
+                    wineRequestHandler.stop();
+                    wineRequestHandler = null;
+                }
+                item.setChecked(shareClipboard);
+                showToast(this, shareClipboard ? "Android clipboard sharing enabled" : "Android clipboard sharing disabled");
+                drawerLayout.closeDrawers();
+                break;
+            }
             case R.id.main_menu_keyboard:
                 AppUtils.showKeyboard(this);
                 drawerLayout.closeDrawers();
