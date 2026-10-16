@@ -143,6 +143,11 @@ public class ContainerManager {
 //            }
 
             container.saveData();
+            try {
+                com.winlator.cmod.Mt5ContainerSetup.prepare(context, container);
+            } catch (java.io.IOException e) {
+                Log.e("ContainerManager", "Could not create MT5 installer shortcut for new container", e);
+            }
             maxContainerId++;
             containers.add(container);
             return container;
@@ -184,6 +189,11 @@ public class ContainerManager {
         dstContainer.setDesktopTheme(srcContainer.getDesktopTheme());
         dstContainer.setWineVersion(srcContainer.getWineVersion());
         dstContainer.saveData();
+        try {
+            com.winlator.cmod.Mt5ContainerSetup.prepare(context, dstContainer);
+        } catch (java.io.IOException e) {
+            Log.e("ContainerManager", "Could not create MT5 installer shortcut for duplicated container", e);
+        }
 
         maxContainerId++;
         containers.add(dstContainer);
