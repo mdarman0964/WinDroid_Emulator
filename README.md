@@ -23,4 +23,4 @@ Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD)
 
 ## Current status
 
-The initial full debug build succeeded. Large runtime archives have been moved to first-run downloads, and optional legacy graphics packages have been removed to reduce the APK. The optimized build must pass before the APK is ready for testing. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification.
+The initial full debug build succeeded. Large runtime archives have been moved to first-run downloads, and optional legacy graphics packages have been removed to reduce the APK. The optimized build has passed CI. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification.
