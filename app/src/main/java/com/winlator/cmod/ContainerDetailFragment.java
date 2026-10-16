@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -278,6 +279,75 @@ public class ContainerDetailFragment extends Fragment {
         return container != null;
     }
 
+
+    /**
+     * Allows explicit removal of selected third-party application folders from this
+     * container's virtual C: drive. Core Windows/Wine directories are not candidates.
+     */
+    private void addWindowsCleanupButton(View view, Context context) {
+        if (container == null) return;
+        View nameView = view.findViewById(R.id.ETName);
+        if (!(nameView.getParent() instanceof LinearLayout)) return;
+        Button cleanupButton = new Button(context);
+        cleanupButton.setText("Clean Windows C: Drive");
+        cleanupButton.setOnClickListener(v -> {
+            File driveC = new File(container.getRootDir(), ".wine/drive_c");
+            ArrayList<File> candidates = new ArrayList<>();
+            String[] programDirs = {"Program Files", "Program Files (x86)"};
+            for (String dirName : programDirs) {
+                File dir = new File(driveC, dirName);
+                File[] children = dir.listFiles();
+                if (children == null) continue;
+                for (File child : children) {
+                    if (child.isDirectory()
+                            && !child.getName().equalsIgnoreCase("MetaTrader 5")
+                            && !child.getName().equalsIgnoreCase("MetaTrader 5 Terminal")
+                            && !child.getName().equalsIgnoreCase("MetaTrader")) candidates.add(child);
+                }
+            }
+            if (candidates.isEmpty()) {
+                Toast.makeText(context, "No application folders found in Program Files.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String[] labels = new String[candidates.size()];
+            boolean[] checked = new boolean[candidates.size()];
+            for (int i = 0; i < candidates.size(); i++) {
+                File file = candidates.get(i);
+                labels[i] = file.getParentFile().getName() + "/" + file.getName();
+            }
+            new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("Select unused Windows apps")
+                    .setMessage("Select only games or apps you recognize and no longer need. Do not select shared runtimes or MT5-related folders. Selected folders will be permanently deleted from this container.")
+                    .setMultiChoiceItems(labels, checked, (dialog, which, isChecked) -> checked[which] = isChecked)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton("Review deletion", (dialog, which) -> {
+                        ArrayList<File> selected = new ArrayList<>();
+                        for (int i = 0; i < checked.length; i++) if (checked[i]) selected.add(candidates.get(i));
+                        if (selected.isEmpty()) {
+                            Toast.makeText(context, "Nothing selected.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        StringBuilder summary = new StringBuilder();
+                        for (File file : selected) summary.append("• ").append(file.getName()).append("\n");
+                        new androidx.appcompat.app.AlertDialog.Builder(context)
+                                .setTitle("Delete selected folders?")
+                                .setMessage(summary + "\nThis cannot be undone.")
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton("Delete", (d, w) -> {
+                                    int removed = 0;
+                                    for (File file : selected) {
+                                        String parentName = file.getParentFile() == null ? "" : file.getParentFile().getName();
+                                        if ((parentName.equals("Program Files") || parentName.equals("Program Files (x86)"))
+                                                && file.isDirectory() && FileUtils.delete(file)) removed++;
+                                    }
+                                    Toast.makeText(context, "Removed " + removed + " folder(s).", Toast.LENGTH_LONG).show();
+                                }).show();
+                    }).show();
+        });
+        LinearLayout parent = (LinearLayout) nameView.getParent();
+        parent.addView(cleanupButton, parent.indexOfChild(nameView) + 1);
+    }
+
     @SuppressLint("SetTextI18n")
     @Nullable
     @Override
@@ -299,6 +369,7 @@ public class ContainerDetailFragment extends Fragment {
         container = containerId > 0 ? manager.getContainerById(containerId) : null;
         contentsManager = new ContentsManager(context);
         contentsManager.syncContents();
+        if (isEditMode()) addWindowsCleanupButton(view, context);
 
         final EditText etName = view.findViewById(R.id.ETName);
 

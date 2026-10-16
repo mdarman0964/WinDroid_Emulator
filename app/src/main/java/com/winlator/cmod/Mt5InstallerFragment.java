@@ -18,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.winlator.cmod.container.ContainerManager;
+
 import java.io.File;
 
 public class Mt5InstallerFragment extends Fragment {
@@ -63,6 +65,11 @@ public class Mt5InstallerFragment extends Fragment {
         layout.addView(download, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+        Button prepareAll = new Button(context);
+        prepareAll.setText("Prepare MT5 in All Containers");
+        layout.addView(prepareAll, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         TextView status = new TextView(context);
         status.setTextSize(14);
         status.setPadding(0, pad / 2, 0, pad);
@@ -80,6 +87,24 @@ public class Mt5InstallerFragment extends Fragment {
         status.setText(installer.exists()
                 ? "Installer already downloaded (" + formatSize(installer.length()) + "). You can download it again if needed."
                 : "Installer not downloaded yet.");
+
+        prepareAll.setOnClickListener(v -> {
+            try {
+                ContainerManager containerManager = new ContainerManager(context);
+                int count = Mt5ContainerSetup.prepareAll(context, containerManager);
+                if (count == 0) {
+                    status.setText("No Containers found. Create a Container first, then try again.");
+                    Toast.makeText(context, "No Containers found.", Toast.LENGTH_LONG).show();
+                } else {
+                    status.setText("MT5 installer shortcut prepared in " + count
+                            + " Container(s). Download the installer, start a Container, then open the MetaTrader 5 Installer shortcut on its Windows desktop.");
+                    Toast.makeText(context, "Prepared MT5 for " + count + " Container(s).", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                status.setText("Could not prepare MT5 in all Containers: " + e.getMessage());
+                Toast.makeText(context, "Could not prepare MT5 shortcuts.", Toast.LENGTH_LONG).show();
+            }
+        });
 
         download.setOnClickListener(v -> {
             try {
