@@ -4,20 +4,17 @@ import android.content.Context;
 
 import com.winlator.cmod.container.Container;
 import com.winlator.cmod.container.ContainerManager;
-import com.winlator.cmod.xenvironment.ImageFs;
+import com.winlator.cmod.core.MSLink;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
- * Adds an MT5 installer launcher to each container's Windows desktop.
- * The installer itself stays in Android's shared Download/WinDroid folder;
- * Wine's D: drive is mapped to Android Downloads by default.
+ * Adds an installer shortcut to each container's Windows desktop.
+ * The installer is stored in Android Download/WinDroid, mapped as D:/WinDroid.
  */
 public final class Mt5ContainerSetup {
-    private static final String SHORTCUT_NAME = "MetaTrader 5 Installer.desktop";
+    private static final String SHORTCUT_BASENAME = "MetaTrader 5 Installer";
     private static final String EXECUTABLE_PATH = "D:/WinDroid/mt5setup.exe";
 
     private Mt5ContainerSetup() {}
@@ -37,23 +34,14 @@ public final class Mt5ContainerSetup {
             throw new IOException("Could not create desktop folder for " + container.getName());
         }
 
-        ImageFs imageFs = ImageFs.find(context);
-        String winePrefix = imageFs.wineprefix;
-        String desktopEntry = "[Desktop Entry]\n"
-                + "Name=MetaTrader 5 Installer\n"
-                + "Comment=Install MetaTrader 5 in this container\n"
-                + "Exec=env WINEPREFIX=\"" + winePrefix + "\" wine \"" + EXECUTABLE_PATH + "\"\n"
-                + "Type=Application\n"
-                + "Terminal=false\n"
-                + "StartupNotify=true\n";
+        File linkFile = new File(desktopDir, SHORTCUT_BASENAME + ".lnk");
+        File desktopFile = new File(desktopDir, SHORTCUT_BASENAME + ".desktop");
+        MSLink.createFile(EXECUTABLE_PATH, linkFile);
+        MSLink.createDesktopFile(linkFile, context);
 
-        File shortcut = new File(desktopDir, SHORTCUT_NAME);
-        try (FileOutputStream output = new FileOutputStream(shortcut, false)) {
-            output.write(desktopEntry.getBytes(StandardCharsets.UTF_8));
-            output.flush();
-        }
-        if (!shortcut.isFile() || shortcut.length() == 0) {
-            throw new IOException("Could not write MT5 shortcut for " + container.getName());
+        if (!linkFile.isFile() || linkFile.length() == 0
+                || !desktopFile.isFile() || desktopFile.length() == 0) {
+            throw new IOException("Could not create MT5 installer shortcut for " + container.getName());
         }
     }
 }
