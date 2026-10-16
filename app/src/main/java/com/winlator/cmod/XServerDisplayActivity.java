@@ -764,18 +764,16 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             sensorManager.unregisterListener(gyroListener);
         }
 
-        // Check if we are entering Picture-in-Picture mode
-        if (!isInPictureInPictureMode()) {
-            // Only pause environment and xServerView if not in PiP mode
-            if (environment != null) {
-                environment.onPause();
-                xServerView.onPause();
-            }
+        // Release the GL surface while backgrounded, but keep the Windows environment
+        // and Wine processes alive so MT5 can continue working when WinDroid is minimized.
+        if (!isInPictureInPictureMode() && environment != null && xServerView != null) {
+            xServerView.onPause();
         }
 
         savePlaytimeData();
         handler.removeCallbacks(savePlaytimeRunnable);
-        ProcessHelper.pauseAllWineProcesses();
+        // Deliberately do not pause Wine processes here; the foreground service keeps
+        // the runtime alive until the user exits the emulator session.
     }
 
 
@@ -826,6 +824,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 if (wineRequestHandler != null) wineRequestHandler.stop();
                 /* Gracefully terminate all running wine processes */
                 ProcessHelper.terminateAllWineProcesses();
+                stopService(new Intent(XServerDisplayActivity.this, EmulatorKeepAliveService.class));
                 /* Wait until all processes have gracefully terminated, forcefully killing them only after a certain amount of time */
                 long start = System.currentTimeMillis();
                 while (!ProcessHelper.listRunningWineProcesses().isEmpty()) {
@@ -1151,6 +1150,10 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         // Start all environment components (XServer, Audio, etc.)
         environment.startEnvironmentComponents();
+
+        // Keep the runtime alive if the user switches apps or locks the screen.
+        androidx.core.content.ContextCompat.startForegroundService(
+                this, new Intent(this, EmulatorKeepAliveService.class));
 
         // Start the WinHandler
         winHandler.start();
