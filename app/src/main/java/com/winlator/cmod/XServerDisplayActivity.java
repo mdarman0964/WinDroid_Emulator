@@ -359,6 +359,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         boolean enableLogs = preferences.getBoolean("enable_wine_debug", false) || preferences.getBoolean("enable_box64_logs", false);
         Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.main_menu_clipboard_toggle).setChecked(preferences.getBoolean("share_android_clipboard", false));
         menu.findItem(R.id.main_menu_logs).setVisible(enableLogs);
         if (XrActivity.isEnabled(this)) menu.findItem(R.id.main_menu_magnifier).setVisible(false);
         navigationView.setNavigationItemSelectedListener(this);
