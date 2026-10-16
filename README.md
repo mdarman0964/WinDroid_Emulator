@@ -1,17 +1,18 @@
 # WinDroid Emulator
 
-Android emulator focused on running MetaTrader 5 (`MT5`) with the minimum practical set of Windows compatibility components.
+WinDroid is an Android compatibility environment focused on running MetaTrader 5 (MT5) with the smallest practical runtime footprint.
 
-## Project goals
+## Goals
 
-- Keep the app and repository as small as practical without removing runtime components required by MT5.
-- Preserve the Wine/Box64, graphics, input, audio, and Android integration required for compatibility.
-- Build a debug APK through GitHub Actions for device testing.
+- Prioritize installing and running the official MetaTrader 5 Windows desktop terminal.
+- Keep the app focused: no bundled games or unrelated desktop applications.
+- Retain only runtime components required for Windows compatibility, graphics, networking, and input.
+- Provide a repeatable GitHub Actions debug APK build for physical-device testing.
 
-## Source
+## Source and licensing
 
-Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD), branch `winlator_bionic`. The upstream repository is archived; this project is maintained separately.
+Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD), branch `winlator_bionic`. Upstream notices and license files are retained. WinDroid is an independent project; it is not affiliated with MetaQuotes.
 
-## Status
+## Current status
 
-Bootstrap is in progress. The first workflow imports the upstream source into this repository and attempts a debug APK build. MT5 installation, graphics compatibility, and background operation must still be verified on a physical device.
+The upstream source has been imported. The first full Android build is running. MT5 installation, graphics compatibility, background persistence, and device behavior must be verified before this build can be considered ready for daily use.
