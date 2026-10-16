@@ -23,4 +23,8 @@ Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD)
 
 ## Current status
 
-The initial full debug build succeeded. Large runtime archives have been moved to first-run downloads, and optional legacy graphics packages have been removed to reduce the APK. The optimized build has passed CI. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification.
+The initial full debug build succeeded. Large runtime archives have been moved to first-run downloads, and optional legacy graphics packages have been removed to reduce the APK. The optimized build has passed CI. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification.
+
+## Branding audit
+
+The app label, user-facing storage folder, and X11 app-name string use WinDroid branding. Upstream source and license references remain where required for attribution. A complete branding audit must also cover embedded assets, native components, and bundled third-party notices; these must not be renamed blindly if doing so breaks compatibility or misrepresents upstream licensing.
