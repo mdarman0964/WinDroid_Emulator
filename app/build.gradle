@@ -113,8 +113,8 @@ tasks.register("downloadProton") {
 }
 
 tasks.register("prepareKotlinBuildScriptModel"){}
-downloadProton.dependsOn(downloadImageFS)
-preBuild.dependsOn(downloadProton)
+// Runtime archives are downloaded on first launch instead of being bundled into the APK.
+ // This keeps the installer package much smaller.
 
 android {
     namespace 'com.winlator.cmod'
