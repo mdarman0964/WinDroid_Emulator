@@ -5,14 +5,22 @@ WinDroid is an Android compatibility environment focused on running MetaTrader 5
 ## Goals
 
 - Prioritize installing and running the official MetaTrader 5 Windows desktop terminal.
-- Keep the app focused: no bundled games or unrelated desktop applications.
-- Retain only runtime components required for Windows compatibility, graphics, networking, and input.
-- Provide a repeatable GitHub Actions debug APK build for physical-device testing.
+- Avoid bundling games and unrelated desktop applications.
+- Keep large ImageFS and Proton archives out of the APK; download and verify them on first launch.
+- Retain the Wine/Proton, Box64/FEX, graphics, networking, and input components needed for Windows compatibility.
+- Build a debug APK through GitHub Actions for physical-device testing.
+
+## Features in progress
+
+- Official MetaTrader 5 installer downloader in the app navigation.
+- Background runtime service for minimized/screen-off operation.
+- Problem notes and a log/lock-file viewer in the Android-side navigation.
+- A clipboard-sharing toggle in the Windows display side menu.
 
 ## Source and licensing
 
-Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD), branch `winlator_bionic`. Upstream notices and license files are retained. WinDroid is an independent project; it is not affiliated with MetaQuotes.
+Based on [Stredohori/Winlator-CMOD](https://github.com/Stredohori/Winlator-CMOD), branch `winlator_bionic`. Upstream notices and license files are retained. WinDroid is an independent project and is not affiliated with MetaQuotes.
 
 ## Current status
 
-The upstream source has been imported. The first full Android build is running. MT5 installation, graphics compatibility, background persistence, and device behavior must be verified before this build can be considered ready for daily use.
+The initial full debug build succeeded. Large runtime archives have been moved to first-run downloads, and optional legacy graphics packages have been removed to reduce the APK. The optimized build must pass before the APK is ready for testing. MT5 installation, graphics compatibility, background persistence, and actual device behavior still require physical-device verification.
