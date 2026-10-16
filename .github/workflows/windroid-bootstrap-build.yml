@@ -80,3 +80,19 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Report APK size
+        if: success()
+        run: du -h app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish debug APK release
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="debug-apk-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" app/build/outputs/apk/debug/app-debug.apk \
+            --title "WinDroid Debug APK #${GITHUB_RUN_NUMBER}" \
+            --notes "Automated WinDroid debug build for device testing. Runtime system archives are downloaded and checksum-verified on first launch."
