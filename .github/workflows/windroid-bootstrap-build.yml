@@ -24,40 +24,32 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Import upstream source once
-        id: bootstrap
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f .bootstrap-complete ]; then
-            echo "imported=false" >> "$GITHUB_OUTPUT"
-            echo "Source already imported; skipping bootstrap."
-            exit 0
-          fi
+          if [ ! -f .bootstrap-complete ]; then
+            cp README.md /tmp/windroid-readme.md
+            cp .github/workflows/windroid-bootstrap-build.yml /tmp/windroid-bootstrap-build.yml
 
-          cp README.md /tmp/windroid-readme.md
-          cp .github/workflows/windroid-bootstrap-build.yml /tmp/windroid-bootstrap-build.yml
-          git clone --depth 1 --branch winlator_bionic --recurse-submodules https://github.com/Stredohori/Winlator-CMOD.git /tmp/winlator-cmod
+            git fetch --depth=1 https://github.com/Stredohori/Winlator-CMOD.git winlator_bionic
+            git reset --hard FETCH_HEAD
 
-          rsync -a --delete \
-            --exclude='.git' \
-            --exclude='.github/workflows/windroid-bootstrap-build.yml' \
-            /tmp/winlator-cmod/ ./
-
-          mkdir -p .github/workflows
-          cp /tmp/windroid-readme.md README.md
-          cp /tmp/windroid-bootstrap-build.yml .github/workflows/windroid-bootstrap-build.yml
-
-          cat > .bootstrap-complete <<'EOF'
+            mkdir -p .github/workflows
+            cp /tmp/windroid-readme.md README.md
+            cp /tmp/windroid-bootstrap-build.yml .github/workflows/windroid-bootstrap-build.yml
+            cat > .bootstrap-complete <<'EOF'
           Imported Stredohori/Winlator-CMOD branch winlator_bionic.
           This marker prevents re-importing upstream on later runs.
           EOF
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Import Winlator-CMOD source for WinDroid"
-          git push origin HEAD:main
-          echo "imported=true" >> "$GITHUB_OUTPUT"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Import Winlator-CMOD source for WinDroid"
+            git push --force origin HEAD:main
+          else
+            echo "Source already imported; skipping bootstrap."
+          fi
 
       - name: Initialize source submodules
         run: |
@@ -74,7 +66,7 @@ jobs:
       - name: Install native build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1 libglu1-mesa libc6 lib32z1 rsync
+          sudo apt-get install -y libgl1 libglu1-mesa libc6 lib32z1
 
       - name: Build debug APK
         run: |
